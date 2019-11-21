@@ -57,7 +57,7 @@ Level *Level_isld_create() {
 	return new Level_isld;
 }
 
-static const uint8_t _isld_dxTable[] = {
+static const uint8_t _isld_stairsDxTable[] = {
 	0, 1, 2, 3, 5, 7, 9, 10, 11, 12, 12, 12, 12, 11, 10, 9, 7, 5, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
@@ -113,7 +113,7 @@ void Level_isld::postScreenUpdate_isld_screen3() {
 			if (o) {
 				AnimBackgroundData *backgroundData = (AnimBackgroundData *)_g->getLvlObjectDataPtr(o, kObjectDataTypeAnimBackgroundData);
 				AndyLvlObjectData *andyData = (AndyLvlObjectData *)_g->getLvlObjectDataPtr(_andyObject, kObjectDataTypeAndy);
-				andyData->dxPos += _isld_dxTable[backgroundData->currentFrame];
+				andyData->dxPos += _isld_stairsDxTable[backgroundData->currentFrame];
 			}
 		}
 	}
@@ -126,7 +126,7 @@ void Level_isld::postScreenUpdate_isld_screen4() {
 			if (o) {
 				AnimBackgroundData *backgroundData = (AnimBackgroundData *)_g->getLvlObjectDataPtr(o, kObjectDataTypeAnimBackgroundData);
 				AndyLvlObjectData *andyData = (AndyLvlObjectData *)_g->getLvlObjectDataPtr(_andyObject, kObjectDataTypeAndy);
-				andyData->dxPos += _isld_dxTable[backgroundData->currentFrame];
+				andyData->dxPos += _isld_stairsDxTable[backgroundData->currentFrame];
 			}
 		}
 	}
@@ -411,7 +411,7 @@ void Level_isld::tick() {
 
 void Level_isld::terminate() {
 	if (!_paf->_skipCutscenes) {
-		// original calls preload()...
+		// bugfix: original calls preload()
 		_paf->unload(kPafAnimation_IslandAndyFalling);
 	}
 }

@@ -95,7 +95,7 @@ struct PafPlayer {
 	void unload(int num = -1);
 
 	void readPafHeader();
-	void readPafHeaderTable(uint32_t *dst, int count);
+	uint32_t *readPafHeaderTable(int count);
 
 	void decodeVideoFrame(const uint8_t *src);
 	uint8_t *getVideoPageOffset(uint8_t a, uint8_t b);
@@ -105,7 +105,6 @@ struct PafPlayer {
 	void decodeVideoFrameOp4(const uint8_t *src);
 
 	void decodeAudioFrame(const uint8_t *src, uint32_t offset, uint32_t size);
-	void decodeAudioFrame2205(const uint8_t *src, int16_t *dst);
 
 	void mix(int16_t *buf, int samples);
 	void mainLoop();

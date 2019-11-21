@@ -63,6 +63,8 @@ static void setupAudio(Game *g) {
 
 static const char *_defaultDataPath = ".";
 
+static const char* _defaultSavePath = ".";
+
 static const char *_levelNames[] = {
 	"rock",
 	"fort",
@@ -85,7 +87,9 @@ static int handleConfigIni(void *userdata, const char *section, const char *name
 	// fprintf(stdout, "config.ini: section '%s' name '%s' value '%s'\n", section, name, value);
 	if (strcmp(section, "engine") == 0) {
 		if (strcmp(name, "disable_paf") == 0) {
-			g->_paf->_skipCutscenes = configBool(value);
+			if (!g->_paf->_skipCutscenes) { // .paf file not found
+				g->_paf->_skipCutscenes = configBool(value);
+			}
 		} else if (strcmp(name, "disable_mst") == 0) {
 			g->_mstDisabled = configBool(value);
 		} else if (strcmp(name, "disable_sss") == 0) {
@@ -96,6 +100,8 @@ static int handleConfigIni(void *userdata, const char *section, const char *name
 			g->_difficulty = atoi(value);
 		} else if (strcmp(name, "frame_duration") == 0) {
 			g->_frameMs = atoi(value);
+		} else if (strcmp(name, "loading_screen") == 0) {
+			g->_loadingScreenEnabled = configBool(value);
 		}
 	} else if (strcmp(section, "display") == 0) {
 		if (strcmp(name, "scale_factor") == 0) {
@@ -116,6 +122,7 @@ static int handleConfigIni(void *userdata, const char *section, const char *name
 
 int main(int argc, char *argv[]) {
 	char *dataPath = 0;
+	char *savePath = 0;
 	int level = 0;
 	int checkpoint = 0;
 	bool resume = true;
@@ -133,10 +140,11 @@ int main(int argc, char *argv[]) {
 	while (1) {
 		static struct option options[] = {
 			{ "datapath",   required_argument, 0, 1 },
-			{ "level",      required_argument, 0, 2 },
-			{ "checkpoint", required_argument, 0, 3 },
-			{ "debug",      required_argument, 0, 4 },
-			{ "cheats",     required_argument, 0, 5 },
+			{ "savepath",   required_argument, 0, 2 },
+			{ "level",      required_argument, 0, 3 },
+			{ "checkpoint", required_argument, 0, 4 },
+			{ "debug",      required_argument, 0, 5 },
+			{ "cheats",     required_argument, 0, 6 },
 			{ 0, 0, 0, 0 },
 		};
 		int index;
@@ -149,6 +157,9 @@ int main(int argc, char *argv[]) {
 			dataPath = strdup(optarg);
 			break;
 		case 2:
+			savePath = strdup(optarg);
+			break;
+		case 3:
 			if (optarg[0] >= '0' && optarg[0] <= '9') {
 				level = atoi(optarg);
 			} else {
@@ -161,14 +172,14 @@ int main(int argc, char *argv[]) {
 			}
 			resume = false;
 			break;
-		case 3:
+		case 4:
 			checkpoint = atoi(optarg);
 			resume = false;
 			break;
-		case 4:
+		case 5:
 			g_debugMask |= atoi(optarg);
 			break;
-		case 5:
+		case 6:
 			cheats |= atoi(optarg);
 			break;
 		default:
@@ -178,7 +189,7 @@ int main(int argc, char *argv[]) {
 	}
 	_system = System_SDL2_create();
 	atexit(exitMain);
-	Game *g = new Game(_system, dataPath ? dataPath : _defaultDataPath, cheats);
+	Game *g = new Game(_system, dataPath ? dataPath : _defaultDataPath, savePath ? savePath : _defaultSavePath, cheats);
 	ini_parse(_configIni, handleConfigIni, g);
 	setupAudio(g);
 	_system->init(_title, Video::W, Video::H, _fullscreen, _widescreen);
@@ -208,5 +219,6 @@ int main(int argc, char *argv[]) {
 	g->_mix.fini();
 	delete g;
 	free(dataPath);
+	free(savePath);
 	return 0;
 }

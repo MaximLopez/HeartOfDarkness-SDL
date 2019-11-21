@@ -11,8 +11,6 @@ enum {
 
 static const bool kLimitSounds = false; // limit the number of active playing sounds
 
-static const bool kCheckLinkedListForDuplicates = false; // old workaround for duplicates, corrupting lists
-
 // if x < 90, lut[x] ~= x / 2
 // if x > 90, lut[x] ~= 45 + (x - 90) * 2
 static const uint8_t _volumeRampTable[129] = {
@@ -101,15 +99,6 @@ void Game::resetSound() {
 	clearSoundObjects();
 }
 
-static bool isSssObjectInList(SssObject *so, SssObject *sssObjectsList) {
-	for (SssObject *current = sssObjectsList; current; current = current->nextPtr) {
-		if (current == so) {
-			return true;
-		}
-	}
-	return false;
-}
-
 SssObject *Game::findLowestRankSoundObject() const {
 	SssObject *so = 0;
 	if (_playingSssObjectsCount >= _playingSssObjectsMax && _sssObjectsList1) {
@@ -127,11 +116,6 @@ void Game::removeSoundObjectFromList(SssObject *so) {
 	debug(kDebug_SOUND, "removeSoundObjectFromList so %p flags 0x%x", so, so->flags);
 	so->pcm = 0;
 	if ((so->flags & kFlagPlaying) != 0) {
-
-		if (kCheckLinkedListForDuplicates && !isSssObjectInList(so, _sssObjectsList1)) {
-			warning("removeSoundObjectFromList so %p not in _sssObjectsList1", so);
-			return;
-		}
 
 		// remove from linked list1
 		SssObject *next = so->nextPtr;
@@ -153,11 +137,6 @@ void Game::removeSoundObjectFromList(SssObject *so) {
 			}
 		}
 	} else {
-
-		if (kCheckLinkedListForDuplicates && !isSssObjectInList(so, _sssObjectsList2)) {
-			warning("removeSoundObjectFromList so %p not in _sssObjectsList2", so);
-			return;
-		}
 
 		// remove from linked list2
 		SssObject *next = so->nextPtr;
@@ -293,10 +272,6 @@ void Game::sssOp12_removeSounds2(int num, uint8_t source, uint8_t sampleIndex) {
 void Game::sssOp16_resumeSound(SssObject *so) {
 	debug(kDebug_SOUND, "sssOp16_resumeSound so %p flags 0x%x", so, so->flags);
 	if ((so->flags & kFlagPaused) != 0) {
-		if (kCheckLinkedListForDuplicates && !isSssObjectInList(so, _sssObjectsList2)) {
-			warning("sssOp16_resumeSound so %p not in _sssObjectsList2, flags 0x%x pcm %p", so, so->flags, so->pcm);
-			return;
-		}
 		SssObject *next = so->nextPtr;
 		SssObject *prev = so->prevPtr;
 		SssPcm *pcm = so->pcm;
@@ -324,10 +299,6 @@ void Game::sssOp17_pauseSound(SssObject *so) {
 		SssObject *next = so->nextPtr;
 		so->pcm = 0;
 		if ((so->flags & kFlagPlaying) != 0) {
-			if (kCheckLinkedListForDuplicates && !isSssObjectInList(so, _sssObjectsList1)) {
-				warning("sssOp17_pauseSound so %p not in _sssObjectsList1", so);
-				return;
-			}
 			if (next) {
 				next->prevPtr = prev;
 			}
@@ -345,10 +316,6 @@ void Game::sssOp17_pauseSound(SssObject *so) {
 				}
 			}
 		} else {
-			if (kCheckLinkedListForDuplicates && !isSssObjectInList(so, _sssObjectsList2)) {
-				warning("sssOp17_pauseSound so %p not in _sssObjectsList2", so);
-				return;
-			}
 			if (next) {
 				next->prevPtr = prev;
 			}
@@ -710,10 +677,6 @@ void Game::prependSoundObjectToList(SssObject *so) {
 	debug(kDebug_SOUND, "prependSoundObjectToList so %p flags 0x%x", so, so->flags);
 	if (so->flags & kFlagPaused) {
 		debug(kDebug_SOUND, "Adding so %p to list2 flags 0x%x", so, so->flags);
-		if (kCheckLinkedListForDuplicates && isSssObjectInList(so, _sssObjectsList2)) {
-			warning("prependSoundObjectToList so %p already in _sssObjectsList2", so);
-			return;
-		}
 		so->prevPtr = 0;
 		so->nextPtr = _sssObjectsList2;
 		if (_sssObjectsList2) {
@@ -722,10 +685,6 @@ void Game::prependSoundObjectToList(SssObject *so) {
 		_sssObjectsList2 = so;
 	} else {
 		debug(kDebug_SOUND, "Adding so %p to list1 flags 0x%x", so, so->flags);
-		if (kCheckLinkedListForDuplicates && isSssObjectInList(so, _sssObjectsList1)) {
-			warning("prependSoundObjectToList so %p already in _sssObjectsList1", so);
-			return;
-		}
 		SssObject *stopSo = so; // vf
 		if (so->pcm && so->pcm->ptr) {
 			if (kLimitSounds && _playingSssObjectsCount >= _playingSssObjectsMax) {
@@ -877,14 +836,16 @@ SssObject *Game::startSoundObject(int bankIndex, int sampleIndex, uint32_t flags
 	SssSample *sample = &_res->_sssSamplesData[sampleNum];
 
 	// original loads the PCM data in a seperate thread
-	_res->loadSssPcm(_res->_sssFile, sample->pcm);
+	SssPcm *pcm = &_res->_sssPcmTable[sample->pcm];
+	if (!pcm->ptr) {
+		_res->loadSssPcm(_res->_sssFile, pcm);
+	}
 
 	if (sample->framesCount != 0) {
 		SssFilter *filter = &_res->_sssFilters[bank->sssFilter];
 		const int priority = CLIP(filter->priorityCurrent + sample->initPriority, 0, 7);
 		uint32_t flags1 = flags & 0xFFF0F000;
 		flags1 |= ((sampleIndex & 0xF) << 16) | (bankIndex & 0xFFF);
-		SssPcm *pcm = &_res->_sssPcmTable[sample->pcm];
 		SssObject *so = addSoundObject(pcm, priority, flags1, flags);
 		if (so) {
 			if (sample->codeOffset1 == kNone && sample->codeOffset2 == kNone && sample->codeOffset3 == kNone && sample->codeOffset4 == kNone) {
@@ -940,7 +901,7 @@ SssObject *Game::startSoundObject(int bankIndex, int sampleIndex, uint32_t flags
 	tmpObj.lvlObject = _currentSoundLvlObject;
 	tmpObj.panningPtr = 0;
 	debug(kDebug_SOUND, "startSoundObject dpcm %d", sample->pcm);
-	tmpObj.pcm = &_res->_sssPcmTable[sample->pcm];
+	tmpObj.pcm = pcm;
 	if (sample->codeOffset1 != kNone) {
 		const uint8_t *code = _res->_sssCodeData + sample->codeOffset1;
 		executeSssCode(&tmpObj, code, true);

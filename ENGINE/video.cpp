@@ -1,6 +1,7 @@
 #include "video.h"
 #include "system.h"
 
+static const bool kUseShadowColorLut = false;
 static const bool _findBlackColor = false;
 
 Video::Video(System *system)
@@ -19,7 +20,11 @@ Video::Video(System *system)
 	_spr.y = 0;
 	_spr.w = W;
 	_spr.h = H;
-	_shadowColorLookupTable = (uint8_t *)malloc(256 * 256); // shadowLayer, frontLayer
+	if (kUseShadowColorLut) {
+		_shadowColorLookupTable = (uint8_t *)malloc(256 * 256); // shadowLayer, frontLayer
+	} else {
+		_shadowColorLookupTable = 0;
+	}
 	_shadowScreenMaskBuffer = (uint8_t *)malloc(256 * 192 * 2 + 256 * 4);
 	_transformShadowBuffer = 0;
 	_transformShadowLayerDelta = 0;
@@ -86,13 +91,13 @@ void Video::clearPalette() {
 	_system->setPalette(_palette, 256);
 }
 
-void Video::decodeSPR(const uint8_t *src, uint8_t *dst, int x, int y, uint8_t flags) {
+void Video::decodeSPR(const uint8_t *src, uint8_t *dst, int x, int y, uint8_t flags, uint16_t spr_w, uint16_t spr_h) {
 	if (y >= _spr.h) {
 		return;
 	} else if (y < _spr.y) {
 		flags |= kSprClipTop;
 	}
-	const int y2 = y + READ_LE_UINT16(src + 4) - 1;
+	const int y2 = y + spr_h - 1;
 	if (y2 < _spr.y) {
 		return;
 	} else if (y2 >= _spr.h) {
@@ -104,14 +109,13 @@ void Video::decodeSPR(const uint8_t *src, uint8_t *dst, int x, int y, uint8_t fl
 	} else if (x < _spr.x) {
 		flags |= kSprClipLeft;
 	}
-	const int x2 = x + READ_LE_UINT16(src + 2) - 1;
+	const int x2 = x + spr_w - 1;
 	if (x2 < _spr.x) {
 		return;
 	} else if (x2 >= _spr.w) {
 		flags |= kSprClipRight;
 	}
 
-	src += 6;
 	if (flags & kSprHorizFlip) {
 		x = x2;
 	}
@@ -236,39 +240,36 @@ bool Video::clipLineCoords(int &x1, int &y1, int &x2, int &y2) {
 	int mask1 = computeLineOutCode(x2, y2);
 	while (1) {
 		const int mask2 = computeLineOutCode(x1, y1);
-		int mask = mask2;
 		if (mask2 == 0 && mask1 == 0) {
 			break;
 		}
-		if ((mask1 & mask) != 0) {
+		if ((mask1 & mask2) != 0) {
 			return true;
 		}
-		if (mask & 1) { // (x < _drawLine.x1)
+		if (mask2 & 1) { // (x < _drawLine.x1)
 			y1 += (y2 - y1) * (_drawLine.x1 - x1) / (x2 - x1);
 			x1 = _drawLine.x1;
 			continue;
 		}
-		mask >>= 8;
-		if (mask & 1) { // (y < _drawLine.y1)
+		if (mask2 & 0x100) { // (y < _drawLine.y1)
 			x1 += (x2 - x1) * (_drawLine.y1 - y1) / (y2 - y1);
 			y1 = _drawLine.y1;
 			continue;
 		}
-		mask >>= 8;
-		if (mask & 1) { // (x > _drawLine.x2)
+		if (mask2 & 0x10000) { // (x > _drawLine.x2)
 			y1 += (y2 - y1) * (_drawLine.x2 - x1) / (x2 - x1);
 			x1 = _drawLine.x2;
 			continue;
 		}
-		mask >>= 8;
-		if (mask & 1) { // (y > _drawLine.y2)
+		if (mask2 & 0x1000000) { // (y > _drawLine.y2)
 			x1 += (x2 - x1) * (_drawLine.y2 - y1) / (y2 - y1);
 			y1 = _drawLine.y2;
 			continue;
 		}
 		SWAP(x1, x2);
 		SWAP(y1, y2);
-		SWAP(mask, mask1);
+		assert(mask2 == 0);
+		mask1 = 0;
 	}
 	return false;
 }
@@ -343,10 +344,7 @@ void Video::drawLine(int x1, int y1, int x2, int y2) {
 }
 
 static uint8_t lookupColor(uint8_t a, uint8_t b, const uint8_t *lut) {
-	// if (a < 144) return b;
-	// else if (b < 144) return lut[b];
-	// else return b;
-	return (a < 144) ? b : lut[b];
+	return (a >= 144 && b < 144) ? lut[b] : b;
 }
 
 void Video::applyShadowColors(int x, int y, int src_w, int src_h, int dst_pitch, int src_pitch, uint8_t *dst1, uint8_t *dst2, uint8_t *src1, uint8_t *src2) {
@@ -425,8 +423,8 @@ void Video::buildShadowColorLookupTable(const uint8_t *src, uint8_t *dst) {
 
 // returns the font index
 uint8_t Video::findStringCharacterFontIndex(uint8_t chr) const {
-	// the original code seems to ignore the last 3 entries
-	for (int i = 0; i < 36 * 2; i += 2) {
+	// bugfix: the original code seems to ignore the last 3 entries
+	for (int i = 0; i < 39 * 2; i += 2) {
 		if (_fontCharactersTable[i] == chr) {
 			return _fontCharactersTable[i + 1];
 		}

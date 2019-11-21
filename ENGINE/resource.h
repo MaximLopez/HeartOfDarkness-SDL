@@ -2,7 +2,6 @@
 #define RESOURCE_H__
 
 #include "defs.h"
-#include "fs.h"
 #include "intern.h"
 
 struct DatHdr {
@@ -60,10 +59,8 @@ struct LvlBackgroundData {
 	uint8_t *dataUnk0Table[4]; // unused
 	uint8_t *backgroundMaskTable[4];
 	uint8_t *backgroundSoundTable[4];
-	uint8_t *backgroundAnimationTable[4];
-	uint8_t *dataUnk4Table[4]; // unused
-	LvlObjectData *backgroundLvlObjectDataTable[4];
-	uint8_t *dataUnk6Table[4]; // unused
+	uint8_t *backgroundAnimationTable[8];
+	LvlObjectData *backgroundLvlObjectDataTable[8];
 };
 
 struct MstHdr {
@@ -74,9 +71,9 @@ struct MstHdr {
 	int movingBoundsIndexDataCount; // 10
 	int levelCheckpointCodeDataCount; // 14
 	int screenAreaDataCount; // 18
-	int unk0x1C; // mstUnk39DataCount
+	int screenAreaIndexDataCount; // 1C
 	int behaviorIndexDataCount; // 20
-	int unk0x24; // mstUnk43DataCount
+	int monsterActionIndexDataCount; // 24
 	int walkPathDataCount; // 28
 	int infoMonster2Count; // 2C
 	int behaviorDataCount; // 30
@@ -112,10 +109,10 @@ struct MstScreenArea {
 	int32_t x2; // 4
 	int32_t y1; // 8
 	int32_t y2; // 0xC
-	uint32_t nextByPos; // 0x10 _mstUnk40
+	uint32_t nextByPos; // 0x10 _mstScreenAreaByPosIndexData
 	uint32_t prev; // 0x14 unused
-	uint32_t nextByValue; // 0x18 indexUnk39
-	uint8_t unk0x1C; // 0x1C indexUnk39
+	uint32_t nextByValue; // 0x18 _mstScreenAreaByValueIndexData
+	uint8_t unk0x1C; // 0x1C _mstScreenAreaByValueIndexData
 	uint8_t unk0x1D; // 0x1D value
 	uint16_t unk0x1E; // 0x1E unused
 	uint32_t codeData; // 0x20, offset _mstCodeData
@@ -149,7 +146,7 @@ struct MstBehaviorIndex { // u42
 	uint32_t dataCount; // C
 }; // sizeof == 16
 
-struct MstUnk43 { // MstMonsterActionIndex
+struct MstMonsterActionIndex { // u43
 	uint32_t *indexUnk48; // indexes _mstMonsterActionData
 	uint32_t count1; // 4
 	uint8_t *data; // 8 lut - indexes .indexUnk48
@@ -432,7 +429,7 @@ struct SssSample {
 	uint16_t pcm; // indexes _sssPcmTable
 	uint16_t framesCount;
 	uint8_t initVolume; // 0x4
-	uint8_t unk5;
+	uint8_t unk5; // unused
 	int8_t initPriority; // 0x6
 	int8_t initPanning; // 0x7
 	uint32_t codeOffset1; // 0x8 indexes _sssCodeData
@@ -441,9 +438,24 @@ struct SssSample {
 	uint32_t codeOffset4; // 0x14 indexes _sssCodeData
 }; // sizeof == 24
 
+struct SssPreloadList {
+	int count;
+	uint8_t *ptr; // uint16_t for v12
+};
+
+struct SssPreloadInfoData {
+	uint16_t pcmBlockOffset;
+	uint16_t pcmBlockSize;
+	uint8_t screenNum;
+	uint8_t preload3Index;
+	uint8_t preload1Index;
+	uint8_t preload2Index;
+	uint32_t unk1C;
+}; // sizeof == 32 (v10,v12) 68 (v6)
+
 struct SssPreloadInfo {
 	uint32_t count;
-	uint8_t *data; // sizeof == 32 (v10,v11) 68 (v6)
+	SssPreloadInfoData *data;
 };
 
 struct SssFilter {
@@ -474,11 +486,6 @@ struct SssUnk6 {
 	uint32_t mask; // 10
 };
 
-struct SssPreloadData {
-	uint8_t count;
-	uint8_t *ptr;
-};
-
 template <typename T>
 struct ResStruct {
 	T *ptr;
@@ -493,6 +500,7 @@ struct ResStruct {
 
 	void deallocate() {
 		free(ptr);
+		ptr = 0;
 		count = 0;
 	}
 	void allocate(unsigned int size) {
@@ -511,9 +519,11 @@ struct ResStruct {
 	}
 };
 
+struct FileSystem;
+
 struct Resource {
 
-	FileSystem _fs;
+	FileSystem *_fs;
 
 	DatHdr _datHdr;
 	File *_datFile;
@@ -524,6 +534,8 @@ struct Resource {
 	SssHdr _sssHdr;
 	File *_sssFile;
 
+	bool _isPsx;
+
 	uint8_t *_loadingImageBuffer;
 	uint8_t *_fontBuffer;
 	uint8_t *_menuBuffer0;
@@ -532,12 +544,13 @@ struct Resource {
 
 	uint8_t _currentScreenResourceNum;
 
-	uint8_t _screensGrid[kMaxScreens * 4];
+	uint8_t _screensGrid[kMaxScreens][4];
 	LvlScreenVector _screensBasePos[kMaxScreens];
 	LvlScreenState _screensState[kMaxScreens];
 	uint8_t *_resLevelData0x470CTable;
 	uint8_t *_resLevelData0x470CTablePtrHdr;
 	uint8_t *_resLevelData0x470CTablePtrData;
+	uint32_t _lvlSssOffset;
 	uint32_t _resLevelData0x2B88SizeTable[kMaxScreens];
 	uint32_t _resLevelData0x2988SizeTable[kMaxSpriteTypes];
 	LvlObjectData _resLevelData0x2988Table[kMaxScreens];
@@ -553,7 +566,8 @@ struct Resource {
 	ResStruct<SssDefaults> _sssDefaultsData;
 	ResStruct<SssBank> _sssBanksData;
 	ResStruct<SssSample> _sssSamplesData;
-	ResStruct<SssPreloadInfo> _sssPreloadInfosData;
+	ResStruct<SssPreloadList> _sssPreload1Table; // pcm
+	ResStruct<SssPreloadInfo> _sssPreloadInfosData; // indexed by screen number
 	ResStruct<SssFilter> _sssFilters;
 	ResStruct<SssPcm> _sssPcmTable;
 	ResStruct<SssUnk6> _sssDataUnk6;
@@ -570,11 +584,11 @@ struct Resource {
 	uint32_t _mstTickCodeData;
 	ResStruct<uint32_t> _mstLevelCheckpointCodeData;
 	ResStruct<MstScreenArea> _mstScreenAreaData;
-	ResStruct<uint32_t> _mstUnk39; // indexes _mstScreenAreaData
-	ResStruct<uint32_t> _mstUnk40; // indexes _mstScreenAreaData
+	ResStruct<uint32_t> _mstScreenAreaByValueIndexData;
+	ResStruct<uint32_t> _mstScreenAreaByPosIndexData;
 	ResStruct<uint32_t> _mstUnk41;
 	ResStruct<MstBehaviorIndex> _mstBehaviorIndexData;
-	ResStruct<MstUnk43> _mstUnk43;
+	ResStruct<MstMonsterActionIndex> _mstMonsterActionIndexData;
 	ResStruct<MstWalkPath> _mstWalkPathData;
 	ResStruct<MstInfoMonster2> _mstInfoMonster2Data;
 	ResStruct<MstBehavior> _mstBehaviorData;
@@ -597,22 +611,19 @@ struct Resource {
 	uint8_t *_mstCodeData;
 	ResStruct<MstOp226Data> _mstOp226Data;
 
-	Resource(const char *dataPath);
+	Resource(FileSystem *fs);
 	~Resource();
 
 	bool sectorAlignedGameData();
 
 	void loadSetupDat();
-	void loadDatHintImage(int num, uint8_t *dst, uint8_t *pal);
-	void loadDatLoadingImage(uint8_t *dst, uint8_t *pal);
+	bool loadDatHintImage(int num, uint8_t *dst, uint8_t *pal);
+	bool loadDatLoadingImage(uint8_t *dst, uint8_t *pal);
 	void loadDatMenuBuffers();
 
 	void loadLevelData(int levelNum);
 
-	void loadLvlScreenGridData(int num);
-	void loadLvlScreenVectorData(int num);
-	void loadLvlScreenStateData(int num);
-	void loadLvlScreenObjectData(int num);
+	void loadLvlScreenObjectData(LvlObject *dat, const uint8_t *src);
 	void loadLvlData(File *fp);
 	void unloadLvlData();
 	void loadLvlSpriteData(int num);
@@ -625,16 +636,18 @@ struct Resource {
 	bool isLvlBackgroundDataLoaded(int num) const;
 	void incLvlSpriteDataRefCounter(LvlObject *ptr);
 	void decLvlSpriteDataRefCounter(LvlObject *ptr);
-	const uint8_t *getLvlSpriteFramePtr(LvlObjectData *dat, int frame) const;
+	const uint8_t *getLvlSpriteFramePtr(LvlObjectData *dat, int frame, uint16_t *w, uint16_t *h) const;
 	const uint8_t *getLvlSpriteCoordPtr(LvlObjectData *dat, int num) const;
+	int findScreenGridIndex(int screenNum) const;
 
 	void loadSssData(File *fp, const uint32_t baseOffset = 0);
 	void unloadSssData();
 	void checkSssCode(const uint8_t *buf, int size) const;
-	void loadSssPcm(File *fp, int num);
+	void loadSssPcm(File *fp, SssPcm *pcm);
 	uint32_t getSssPcmSize(const SssPcm *pcm) const;
 	void clearSssGroup3();
 	void resetSssFilters();
+	void preloadSssPcmList(const SssPreloadInfoData *preloadInfoData);
 
 	void loadMstData(File *fp);
 	void unloadMstData();
