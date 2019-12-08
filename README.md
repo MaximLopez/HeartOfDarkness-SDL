@@ -1,6 +1,10 @@
 ![GITHUB_BANNER](https://user-images.githubusercontent.com/49678526/69384191-f2ca8e00-0cbb-11ea-8049-14c60b72acf1.png)
 # HeartOfDarkness-SDL
-<p>Release version : 0.2.4</p>
+<p>Release version : 0.2.4.1</p>
+
+* Go to [INSTALLATION](INSTALLATION.MD) for more informations about the installation.
+* Go to [CONTROL](CONTROL.MD) for the control's scheme.
+* Go to [BUGS](BUGS.MD) for the knows bug's
 
 ## About
 <p>The objectives of this port is to be 100% accurate to the real game and make it compatible with every devices (like PSP, Nintendo Switch, etc.) or any modern operating system (Linux, Windows, macOS, etc.) that can run SDL2.</p>
@@ -11,7 +15,6 @@
 <p>Menus are currently missing.</p>
 <p>PSX datafiles can be used but sound (SPU ADPCM) and background screens (MDEC)
 are not handled yet.</p>
-<p>No other port beyond Windows and Android.</p>
 <p>No GUI control on Android.</p>
 
 ## Installation
@@ -25,10 +28,8 @@ are not handled yet.</p>
 * *_hod.sss
 * *_hod.mst
 
-### Running
-<p>Simply double click on "Heart of Darkness.exe"</p>
-
 ### Configuration
+
 <p>By default the engine will try to load the files from the current directory
 and start the game from the first level.</p>
 <p>These defaults can be changed using command line switches :</p>

@@ -1,6 +1,21 @@
 # CHANGELOG
+> release 0.2.4.1
+* Add Usineur port's
+* Update repo
+* Add CONTROL.MD
+* Add INSTALLATION.MD
+* Delete RELEASE folder
 
-## ORIGINAL CHANGELOG
+> relase 0.2.4
+* Update from GREGORY MONTOIR
+
+> release 0.2
+* Update from GREGORY MONTOIR
+
+> release 0.1
+* Initial repo
+
+## ORIGINAL CHANGELOG FROM GREGORY MONTOIR
 > release 0.2.4
 * fixed Amigo walk path in 'pwr2' screen 7
 * fixed glowing stone puzzle in 'lar2'
