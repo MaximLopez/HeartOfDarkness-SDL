@@ -5,7 +5,6 @@
 
 struct PafPlayer;
 struct Resource;
-struct System;
 struct Video;
 
 struct DatSpritesGroup {
@@ -25,7 +24,6 @@ struct Menu {
 
 	PafPlayer *_paf;
 	Resource *_res;
-	System *_system;
 	Video *_video;
 
 	DatSpritesGroup *_titleSprites;
@@ -34,7 +32,7 @@ struct Menu {
 	DatBitmap *_playerBitmap;
 	int _currentOption;
 
-	Menu(PafPlayer *paf, Resource *res, System *system, Video *video);
+	Menu(PafPlayer *paf, Resource *res, Video *video);
 
 	void loadData();
 

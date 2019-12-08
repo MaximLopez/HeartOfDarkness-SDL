@@ -1,6 +1,16 @@
 # CHANGELOG
 
 ## ORIGINAL CHANGELOG
+> release 0.2.4
+* fixed Amigo walk path in 'pwr2' screen 7
+* fixed glowing stone puzzle in 'lar2'
+* fixed missing trigger for switch #0 in 'lar1'
+
+> release 0.2.3
+* fixed double spectre fireball animations in 'lar1' and 'lar2'
+* fixed level transition from 'pwr1' to 'isld'
+* fixed screen state for 'lava' screen 15
+
 > release 0.2.2
 * fixed lever in 'lava' level screen 2
 * fixed masking with plants in 'pwr1' level
