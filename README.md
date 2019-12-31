@@ -4,8 +4,8 @@
 <p><b>We have a Wiki ! Please check it out.</b></p>
 
 * Go see the [Wiki](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki)
-* Go to [INSTALLATION](INSTALLATION.MD) for more informations about the installation.
-* Go to [CONTROL](CONTROL.MD) for the control's scheme.
+* Go to [INSTALLATION](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki/Installation) for more informations about the installation.
+* Go to [CONTROL](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki/How-to-control) for the control's scheme.
 * Go to [BUGS](BUGS.MD) for the knows bug's
 
 ## About
