@@ -1,4 +1,11 @@
 # CHANGELOG
+> release 0.2.5
+* Preparing Linux port
+* Preparing macOS port
+* Cleaning repo
+* Update from GREGORY MONTOIR
+* Update Switch and Vita's port into 0.2.5
+
 > release 0.2.4.1
 * Add Usineur port's
 * Update repo
@@ -16,6 +23,11 @@
 * Initial repo
 
 ## ORIGINAL CHANGELOG FROM GREGORY MONTOIR
+
+> release 0.2.5
+* fixed spiders and worms movement
+* several fixes for big endian platforms
+
 > release 0.2.4
 * fixed Amigo walk path in 'pwr2' screen 7
 * fixed glowing stone puzzle in 'lar2'

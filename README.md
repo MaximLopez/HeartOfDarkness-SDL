@@ -6,7 +6,6 @@
 * Go see the [Wiki](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki)
 * Go to [INSTALLATION](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki/Installation) for more informations about the installation.
 * Go to [CONTROL](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki/How-to-control) for the control's scheme.
-* Go to [BUGS](BUGS.MD) for the knows bug's
 
 ## About
 <p>The objectives of this port is to be 100% accurate to the real game and make it compatible with every devices (like PSP, Nintendo Switch, etc.) or any modern operating system (Linux, Windows, macOS, etc.) that can run SDL2.</p>
