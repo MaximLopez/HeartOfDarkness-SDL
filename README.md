@@ -1,6 +1,6 @@
 ![GITHUB_BANNER](https://user-images.githubusercontent.com/49678526/69384191-f2ca8e00-0cbb-11ea-8049-14c60b72acf1.png)
 # HeartOfDarkness-SDL
-<p>Release version : 0.2.4.1</p>
+<p>Release version : 0.2.5</p>
 <p><b>We have a Wiki ! Please check it out.</b></p>
 
 * Go see the [Wiki](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki)
@@ -47,6 +47,7 @@ and start the game from the first level.</p>
 ## Credits 
 <p>All the team at Amazing Studio for possiby the best cinematic platformer ever developed.</p>
 <p>Gregory Montoir for the hode engine.</p>
+<p>Usineur for the Switch and Vita port.</p>
 
 ## URLs
 * [Mobygames](https://www.mobygames.com/game/heart-of-darkness)
