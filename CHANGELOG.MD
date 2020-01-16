@@ -1,4 +1,7 @@
 # CHANGELOG
+> release 0.2.5.1
+* First Linux release
+
 > release 0.2.5
 * Preparing Linux port
 * Preparing macOS port
