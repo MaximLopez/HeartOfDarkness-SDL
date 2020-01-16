@@ -12,6 +12,14 @@
 <p>HeartOfDarkness-SDL is a reimplementation of the engine of the used by the game "Heart of Darkness" developed by Amazing Studio.</p>
 <p>This is a fork of "hode" by Gregory Montoir</p>
 
+## Installation
+<p>Go to release for downloading the engine. HeartOfDarkness-SDL is avalaible for :</p>
+* Microsoft Windows
+* Linux
+* Nintendo Switch
+* Google Android
+* Sony PlayStation Vita
+
 ## Status 
 <p>Menus are currently missing.</p>
 <p>PSX datafiles can be used but sound (SPU ADPCM) and background screens (MDEC)
