@@ -1,0 +1,50 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HODEX", "HODEX.vcproj", "{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}"
+	ProjectSection(ProjectDependencies) = postProject
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF} = {22A15CB5-69B1-4145-A7BC-5DFE39C805AF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libSDLx", "..\libSDLx\libSDLx.vcproj", "{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Profile = Profile
+		Profile_FastCap = Profile_FastCap
+		Release = Release
+		Release_LTCG = Release_LTCG
+		Xbox Singled Threaded = Xbox Singled Threaded
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Debug.ActiveCfg = Debug|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Debug.Build.0 = Debug|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Profile.ActiveCfg = Profile|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Profile.Build.0 = Profile|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Release.ActiveCfg = Release|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Release.Build.0 = Release|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Xbox Singled Threaded.ActiveCfg = Release_LTCG|Xbox
+		{B0FFF9CF-6020-4629-A07E-E17DBBAC1063}.Xbox Singled Threaded.Build.0 = Release_LTCG|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Debug.ActiveCfg = Debug|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Debug.Build.0 = Debug|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Profile.ActiveCfg = Profile|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Profile.Build.0 = Profile|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Release.ActiveCfg = Release|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Release.Build.0 = Release|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Xbox Singled Threaded.ActiveCfg = Xbox Singled Threaded|Xbox
+		{22A15CB5-69B1-4145-A7BC-5DFE39C805AF}.Xbox Singled Threaded.Build.0 = Xbox Singled Threaded|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
