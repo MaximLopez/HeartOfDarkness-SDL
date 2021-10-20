@@ -1,15 +1,15 @@
 ![GITHUB_BANNER](https://user-images.githubusercontent.com/49678526/69384191-f2ca8e00-0cbb-11ea-8049-14c60b72acf1.png)
 # HeartOfDarkness-SDL
-<p>Release version : 0.2.9</p>
+<p>Release version : 0.2.9.1</p>
 <p><b>We have a Wiki ! Please check it out.</b></p>
 
 ## Links
 * Go see the [Wiki](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki)
-* Go to [INSTALLATION](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki/Installation) for more informations about the installation.
-* Go to [CONTROL](https://github.com/MaximLopez/HeartOfDarkness-SDL/wiki/How-to-control) for the control's scheme.
-* [CHANGELOG](./GitHub/CHANGELOG.md)
-* [CONTRIBUTING](./GitHub/CONTRIBUTING.md)
-* [COMPATIBILITY_RELEASE](./GitHub/COMPATIBILITY_RELEASE.md)
+* Go to [INSTALLATION](./.github/Wiki/Installation.md) for more informations about the installation.
+* Go to [CONTROL](./.github/Wiki/How-to-control.md) for the control's scheme.
+* [CHANGELOG](./.github/CHANGELOG.md)
+* [CONTRIBUTING](./.github/CONTRIBUTING.md)
+* [COMPATIBILITY_RELEASE](./.github/COMPATIBILITY_RELEASE.md)
 
 ## About
 <p>The objectives of this port is to be 100% accurate to the real game and make it compatible with every devices (like PSP, Nintendo Switch, etc.) or any modern operating system (Linux, Windows, macOS, etc.) that can run SDL2.</p>

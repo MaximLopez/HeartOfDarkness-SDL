@@ -1,4 +1,10 @@
 # CHANGELOG
+> release 0.2.9.1
+* Clean up repo
+* Move to release 0.2.9.F from Gregory Montoir
+* Change to README.md
+* Activate Git LFS on the repo
+
 > release 0.2.9.0
 * Clean up repo
 * Add Nintendo Wii and PSP executable
